@@ -2,54 +2,49 @@ package LiteratureRecommendationSystem;
 
 import LiteratureRecommendationSystem.User.User;
 import LiteratureRecommendationSystem.User.UserFactory;
-import LiteratureRecommendationSystem.domain.*;
+import LiteratureRecommendationSystem.domain.Book;
+import LiteratureRecommendationSystem.domain.Encyclopedia;
+import LiteratureRecommendationSystem.domain.Literature;
+import LiteratureRecommendationSystem.domain.Manga;
 import LiteratureRecommendationSystem.service.DataForFilter;
 import LiteratureRecommendationSystem.service.InputForFilter;
 import LiteratureRecommendationSystem.service.LiteratureService;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 
 import java.util.List;
-import java.util.Scanner;
 
-@SpringBootApplication
-public class Main {
+public class LegacyCliFlow {
 
     private static final int DEFAULT_LIMIT = 1;
 
-    public static void main(String[] args) {
-        SpringApplication.run(Main.class, args);
+    private final LiteratureService service;
+    private final UserFactory userFactory;
+    private final InputForFilter inputForFilter;
+
+    public LegacyCliFlow(LiteratureService service, UserFactory userFactory, InputForFilter inputForFilter) {
+        this.service = service;
+        this.userFactory = userFactory;
+        this.inputForFilter = inputForFilter;
     }
 
-    @Bean
-    CommandLineRunner cli(LiteratureService service) {
-        return args -> {
-            try (Scanner scanner = new Scanner(System.in)) {
-                UserFactory userFactory = new UserFactory(scanner);
-                InputForFilter inputForFilter = new InputForFilter(scanner);
+    public void execute() {
+        User user = userFactory.create();
+        DataForFilter filter = inputForFilter.create(user);
 
-                User user = userFactory.create();
-                DataForFilter filter = inputForFilter.create(user);
-
-                List<Literature> recommendations = service.recommend(filter, DEFAULT_LIMIT);
-                printRecommendations(user, recommendations);
-            }
-        };
+        List<Literature> recommendations = service.recommend(filter, DEFAULT_LIMIT);
+        printRecommendations(user, recommendations);
     }
 
-    private static void printRecommendations(User user, List<Literature> recommendations) {
+    private void printRecommendations(User user, List<Literature> recommendations) {
         System.out.println("\n(づ ◕‿◕ )づ " + user.getName() + ", toto je literatúra, ktorá by sa ti mohla páčiť:");
         if (recommendations.isEmpty()) {
             System.out.println("Prepáč, ale nepodarilo sa mi nájsť nič, čo by zodpovedalo zadaným kategóriám. ~(>_<~))");
             return;
         }
-        Literature literature = recommendations.get(0);
+        Literature literature = recommendations.getFirst();
         System.out.println(buildDescription(literature));
     }
 
-    private static String buildDescription(Literature literature) {
+    private String buildDescription(Literature literature) {
         StringBuilder details = new StringBuilder();
         details.append("Typ: ").append(literature.getType()).append("\n");
         details.append("Názov: ").append(literature.getName()).append("\n");
