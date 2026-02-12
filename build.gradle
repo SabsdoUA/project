@@ -27,3 +27,8 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.named('bootRun') {
+	standardInput = System.in
+	args '--app.cli.enabled=true'
+}
