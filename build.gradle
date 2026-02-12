@@ -30,4 +30,5 @@ tasks.named('test') {
 
 tasks.named('bootRun') {
 	standardInput = System.in
+	args '--app.cli.enabled=true'
 }
