@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConditionalOnProperty(name = "app.cli.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = "app.cli.enabled", havingValue = "true", matchIfMissing = false)
 public class LiteratureRecommendationRunner implements CommandLineRunner {
 
     private final LegacyCliFlow legacyCliFlow;
